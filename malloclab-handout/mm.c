@@ -152,8 +152,8 @@ int mm_init(void)
 	PUT(HDRP(NEXT_BLKP(bp)), PACK(0, 1)); /* New epilogue header */
 	
 	minlist = size / 200;
-	if(minlist > 21)
- 		minlist = 21; 
+	if(minlist > 22)
+ 		minlist = 22; 
 	temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
 	PUT(heap_listp + (minlist * WSIZE), (int)bp); //set global first free block to this block.
 	
@@ -221,9 +221,9 @@ void *mm_malloc(size_t size)
  	void *bp;
  	
  	int minlist = asize / 200;
- 	if(minlist > 21)
- 		minlist = 21; 
- 	for(; minlist < 22; minlist++){
+ 	if(minlist > 22)
+ 		minlist = 22; 
+ 	for(; minlist < 23; minlist++){
 		for (bp = (char *)GET(heap_listp + (minlist * WSIZE)); (int)bp != 0 && GET_SIZE(HDRP(bp)) > 0; bp = (char *)GET(bp+WSIZE)) {
 			if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp)))) {
 				return bp;
@@ -248,8 +248,8 @@ void *mm_malloc(size_t size)
  		
  		//REMOVE BP FROM FREE LIST
  		minlist = csize / 200;
- 		if(minlist > 21)
- 			minlist = 21; 
+ 		if(minlist > 22)
+ 			minlist = 22; 
 		if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
  			PUT(heap_listp+(minlist * WSIZE), 0); 	
  		else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
@@ -283,8 +283,8 @@ void *mm_malloc(size_t size)
  	size_t size = GET_SIZE(HDRP(bp));
  	
  	minlist = size / 200;
- 	if(minlist > 21)
- 		minlist = 21; 
+ 	if(minlist > 22)
+ 		minlist = 22; 
 	if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
  		PUT(heap_listp+(minlist * WSIZE), 0); 	
  	else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
@@ -306,8 +306,8 @@ void *mm_malloc(size_t size)
  	
  	size_t size = GET_SIZE(HDRP(bp));
  	minlist = size / 200;
-	if(minlist > 21)
-		minlist = 21; 
+	if(minlist > 22)
+		minlist = 22; 
 	temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
 	PUT(heap_listp + (minlist * WSIZE), (int)bp); //set global first free block to this block.
 	
@@ -336,8 +336,8 @@ void mm_free(void *bp)
 	PUT(FTRP(bp), PACK(size, 0));
 	
  	minlist = size / 200;
- 	if(minlist > 21)
- 		minlist = 21; 
+ 	if(minlist > 22)
+ 		minlist = 22; 
  	temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
  	PUT(heap_listp + (minlist * WSIZE), (int)bp); //set global first free block to this block.
  	if((int)temp_next != 0) // if the old global next was not 0, update the old global next's previous free block pointer to this block.
@@ -377,7 +377,7 @@ void mm_free(void *bp)
 
 	else if (!prev_alloc && next_alloc) { /* Case 3 */
 		
-		
+		/*
 		//REMOVE BP FROM FREE LIST
  		remove_free_list(bp);
  		//REMOVE PREV FROM FREE LIST
@@ -390,6 +390,7 @@ void mm_free(void *bp)
 
 		//ADD TO THE FREE LIST
 		add_free_list(bp);
+		*/
 		
 	}
 
