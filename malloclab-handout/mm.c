@@ -259,7 +259,8 @@ void *mm_malloc(size_t size)
  	
  	size = GET_SIZE(HDRP(bp));
  	minlist = size / 50 / WSIZE;
-
+	if(minlist > 83)
+		minlist = 83; 
 	temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
 	PUT(heap_listp + (minlist * WSIZE), (int)bp); //set global first free block to this block.
 
