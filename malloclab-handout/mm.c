@@ -280,6 +280,8 @@ void *mm_malloc(size_t size)
  {	
  	int minlist; 
  	
+ 	size_t size = GET_SIZE(HDRP(bp)); 
+ 	
  	minlist = size / 200;
  	if(minlist > 22)
  		minlist = 22; 
