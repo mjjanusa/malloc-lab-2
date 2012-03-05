@@ -292,9 +292,9 @@ void *mm_malloc(size_t size)
  
  static void remove_free_list(void *bp)
  {	
- 	int minlist, size; 
+ 	int minlist; 
  	
- 	size = GET_SIZE(bp);
+ 	size_t size = GET_SIZE(HDRP(bp));
  	minlist = size / 200;
  	if(minlist > 21)
  		minlist = 21; 
@@ -315,10 +315,10 @@ void *mm_malloc(size_t size)
  
  static void add_free_list(void *bp)
  {	 
- 	int minlist, size;
+ 	int minlist;
  	void *temp_next;
  	
- 	size = GET_SIZE(bp);
+ 	size_t size = GET_SIZE(HDRP(bp));
  	minlist = size / 200;
 	if(minlist > 21)
 		minlist = 21; 
