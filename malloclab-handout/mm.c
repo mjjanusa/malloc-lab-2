@@ -90,44 +90,11 @@ int mm_init(void)
 	PUT(heap_listp, 0); /* Alignment padding */
 
 	PUT(heap_listp + (1*WSIZE), PACK(43*DSIZE, 1)); /* Prologue header */
+	
 	int i;
 	for(i = 2; i < 86; i++) {
 		PUT(heap_listp + (i*WSIZE), 0); /* initialize free pointers (one for every increment of 50 words*/
 	}
-	
-	/*PUT(heap_listp + (1*WSIZE), 0); // First Free Pointer  0 <= size < 200
-	PUT(heap_listp + (2*WSIZE), 0); // First Free Pointer  200 <= size < 400
-
-	PUT(heap_listp + (3*WSIZE), 0); // First Free Pointer  400 <= size < 600
-	PUT(heap_listp + (4*WSIZE), 0); // First Free Pointer  600 <= size < 800
-
-	PUT(heap_listp + (5*WSIZE), 0); // First Free Pointer  800 <= size < 1000
-	PUT(heap_listp + (6*WSIZE), 0); // First Free Pointer  1000 <= size < 1200
-
-	PUT(heap_listp + (7*WSIZE), 0); // First Free Pointer  1200 <= size < 1400
-	PUT(heap_listp + (8*WSIZE), 0); // First Free Pointer  1400 <= size < 1600
-
-	PUT(heap_listp + (9*WSIZE), 0); // First Free Pointer  1600 <= size < 1800
-	PUT(heap_listp + (10*WSIZE), 0); // First Free Pointer  1800 <= size < 2000
-
-	PUT(heap_listp + (11*WSIZE), 0); // First Free Pointer  2000 <= size < 2200
-	PUT(heap_listp + (12*WSIZE), 0); // First Free Pointer  2200 <= size < 2400
-
-	PUT(heap_listp + (13*WSIZE), 0); // First Free Pointer  2400 <= size < 2600
-	PUT(heap_listp + (14*WSIZE), 0); // First Free Pointer  2600 <= size < 2800
-
-	PUT(heap_listp + (15*WSIZE), 0); // First Free Pointer  2800 <= size < 3000
-	PUT(heap_listp + (16*WSIZE), 0); // First Free Pointer  3000 <= size < 3200
-
-	PUT(heap_listp + (17*WSIZE), 0); // First Free Pointer  3200 <= size < 3400
-	PUT(heap_listp + (18*WSIZE), 0); // First Free Pointer  3400 <= size < 3600
-
-	PUT(heap_listp + (19*WSIZE), 0); //First Free Pointer  3600 <= size < 3800
-	PUT(heap_listp + (20*WSIZE), 0); // First Free Pointer  3800 <= size < 4000
-
-	PUT(heap_listp + (21*WSIZE), 0); // First Free Pointer  4000 <= size < 4200
-	PUT(heap_listp + (22*WSIZE), 0); // First Free Pointer  4200 <= size
-	*/
 
 	PUT(heap_listp + (86*WSIZE), PACK(43*DSIZE, 1)); /* Prologue footer */
 	PUT(heap_listp + (87*WSIZE), PACK(0, 1)); /* Epilogue header */
@@ -218,7 +185,7 @@ void *mm_malloc(size_t size)
  	/* First fit search */
  	void *bp;
  	
- 	int minlist = asize / 50;
+ 	int minlist = asize / 50 / WSIZE;
  	if(minlist > 83)
  		minlist = 83; 
  	for(; minlist < 84; minlist++){
@@ -266,7 +233,7 @@ void *mm_malloc(size_t size)
  	
  	size_t size = GET_SIZE(HDRP(bp));
  	
- 	minlist = size / 50;
+ 	minlist = size / 50 / WSIZE;
  	if(minlist > 83)
  		minlist = 83; 
 	if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
@@ -289,7 +256,7 @@ void *mm_malloc(size_t size)
  	void *temp_next;
  	
  	size_t size = GET_SIZE(HDRP(bp));
- 	minlist = size / 50;
+ 	minlist = size / 50 / WSIZE;
 	if(minlist > 83)
 		minlist = 83; 
 	temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
