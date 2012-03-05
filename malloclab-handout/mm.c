@@ -164,7 +164,7 @@ int mm_init(void)
 	PUT(bp+WSIZE, (int)temp_next);
 
 	/* Coalesce if the previous block was free */
-	//return coalesce(bp);
+	return coalesce(bp);
 	//return bp;
  }
 ////////////////////////////////////////////////////////////////
@@ -280,7 +280,7 @@ void *mm_malloc(size_t size)
  {	
  	int minlist; 
  	
- 	size_t size = GET_SIZE(HDRP(bp)); 
+ 	size_t size = GET_SIZE(HDRP(bp));
  	
  	minlist = size / 200;
  	if(minlist > 22)
@@ -345,7 +345,7 @@ void mm_free(void *bp)
 	PUT(bp, 0); 
 	PUT(bp+WSIZE, (int)temp_next);
 
-	//coalesce(bp);
+	coalesce(bp);
 }
 ////////////////////////////////////////////////////////////////
  static void *coalesce(void *bp)
