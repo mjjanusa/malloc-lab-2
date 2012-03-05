@@ -269,22 +269,7 @@ void *mm_malloc(size_t size)
  		PUT(HDRP(bp), PACK(csize, 1));
  		PUT(FTRP(bp), PACK(csize, 1));
  		
- 		//REMOVE BP FROM FREE LIST
- 		minlist = csize / 200;
- 		if(minlist > 21)
- 			minlist = 21; 
-		if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
- 			PUT(heap_listp+(minlist * WSIZE), 0); 	
- 		else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
- 			PUT(heap_listp+(minlist * WSIZE), GET(bp + WSIZE));
- 			PUT((char *)GET(bp + WSIZE), 0);
- 		}
- 		else if (GET(bp) != 0 && GET(bp + WSIZE) == 0) // if prev pointer not 0 and next 0 then make prev's next pointer 0.
- 			PUT(((char *)GET(bp) + WSIZE), 0);
- 		else {//if prev pointer and next pointer not 0 update pointers 
- 			PUT(((char *)GET(bp) + WSIZE), GET(bp + WSIZE));	
- 			PUT(((char *)GET(bp + WSIZE)), GET(bp));	
- 		}
+ 		remove_free_list(bp);
  	}
  }
  
