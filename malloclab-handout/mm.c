@@ -363,7 +363,7 @@ void mm_free(void *bp)
  		//REMOVE BP FROM FREE LIST
  		remove_free_list(bp);
  		//REMOVE NEXT FROM FREE LIST
- 		remove_free_list(NEXT_BLKP(bp));
+ 		remove_free_list(NEXT_BLKP(bp)+WSIZE);
 		
  		size += GET_SIZE(HDRP(NEXT_BLKP(bp)));
 		PUT(HDRP(bp), PACK(size, 0));
