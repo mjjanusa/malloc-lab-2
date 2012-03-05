@@ -6,8 +6,8 @@ extern void mm_free (void *bp);
 extern void *mm_realloc(void *ptr, size_t size);
 static void *extend_heap(size_t words);
 static void *coalesce(void *bp);
-static void add_free_list(void *bp);
-static void remove_free_list(void *bp);
+static void *add_free_list(void *bp);
+static void *remove_free_list(void *bp);
 static void *find_fit(size_t asize);
 static void place(void *bp, size_t asize);
 

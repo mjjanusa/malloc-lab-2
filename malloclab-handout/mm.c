@@ -274,7 +274,7 @@ void *mm_malloc(size_t size)
  }
  
  
- static void remove_free_list(void *bp)
+ static void *remove_free_list(void *bp)
  {	
  	int minlist; 
  	
@@ -297,7 +297,7 @@ void *mm_malloc(size_t size)
  	}
  }
  
- static void add_free_list(void *bp)
+ static void *add_free_list(void *bp)
  {	 
  	int minlist;
  	void *temp_next;
