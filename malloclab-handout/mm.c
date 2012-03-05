@@ -301,7 +301,7 @@ void *mm_malloc(size_t size)
  {	
  	int minlist, size; 
  	
- 	size = GET_SIZE(bp)
+ 	size = GET_SIZE(bp);
  	minlist = size / 200;
  	if(minlist > 21)
  		minlist = 21; 
