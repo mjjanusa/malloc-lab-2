@@ -165,7 +165,7 @@ int mm_init(void)
 
 	/* Coalesce if the previous block was free */
 	//return coalesce(bp);
-	return bp;
+	//return bp;
  }
 ////////////////////////////////////////////////////////////////
 /* 
@@ -247,7 +247,21 @@ void *mm_malloc(size_t size)
  		PUT(FTRP(nxt_bp), PACK(csize-asize, 0));
  		
  		//REMOVE BP FROM FREE LIST
- 		remove_free_list(csize, bp);
+ 		minlist = csize / 200;
+ 		if(minlist > 22)
+ 			minlist = 22; 
+		if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
+ 			PUT(heap_listp+(minlist * WSIZE), 0); 	
+ 		else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
+ 			PUT(heap_listp+(minlist * WSIZE), GET(bp + WSIZE));
+ 			PUT((char *)GET(bp + WSIZE), 0);
+ 		}
+ 		else if (GET(bp) != 0 && GET(bp + WSIZE) == 0) // if prev pointer not 0 and next 0 then make prev's next pointer 0.
+ 			PUT(((char *)GET(bp) + WSIZE), 0);
+ 		else {//if prev pointer and next pointer not 0 update pointers 
+ 			PUT(((char *)GET(bp) + WSIZE), GET(bp + WSIZE));	
+ 			PUT(((char *)GET(bp + WSIZE)), GET(bp));	
+ 		}
  		
  		//ADD nxt_bp to free list
  		add_free_list(nxt_bp);
@@ -257,12 +271,12 @@ void *mm_malloc(size_t size)
  		PUT(FTRP(bp), PACK(csize, 1));
  		
  		//REMOVE BP FROM FREE LIST
- 		remove_free_list(csize, bp);
+ 		remove_free_list(bp);
  	}
  }
  
  
- static void remove_free_list(size_t size, void *bp)
+ static void remove_free_list(void *bp, size_t size)
  {	
  	int minlist; 
  	
@@ -345,9 +359,9 @@ void mm_free(void *bp)
 	else if (prev_alloc && !next_alloc) { /* Case 2 */
 		
  		//REMOVE BP FROM FREE LIST
- 		remove_free_list(size, bp);
+ 		remove_free_list(bp);
  		//REMOVE NEXT FROM FREE LIST
- 		remove_free_list(GET_SIZE(HDRP(NEXT_BLKP(bp))), NEXT_BLKP(bp));
+ 		remove_free_list(NEXT_BLKP(bp));
 		
  		size += GET_SIZE(HDRP(NEXT_BLKP(bp)));
 		PUT(HDRP(bp), PACK(size, 0));
