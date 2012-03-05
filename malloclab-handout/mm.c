@@ -89,7 +89,7 @@ int mm_init(void)
 	
 	PUT(heap_listp, 0); /* Alignment padding */
 
-	PUT(heap_listp + (1*WSIZE), PACK(85*DSIZE, 1)); /* Prologue header */
+	PUT(heap_listp + (1*WSIZE), PACK(43*DSIZE, 1)); /* Prologue header */
 	int i;
 	for(i = 2; i < 86; i++) {
 		PUT(heap_listp + (i*WSIZE), 0); /* initialize free pointers (one for every increment of 50 words*/
@@ -129,7 +129,7 @@ int mm_init(void)
 	PUT(heap_listp + (22*WSIZE), 0); // First Free Pointer  4200 <= size
 	*/
 
-	PUT(heap_listp + (86*WSIZE), PACK(85*DSIZE, 1)); /* Prologue footer */
+	PUT(heap_listp + (86*WSIZE), PACK(43*DSIZE, 1)); /* Prologue footer */
 	PUT(heap_listp + (87*WSIZE), PACK(0, 1)); /* Epilogue header */
 	heap_listp += (2*WSIZE);
 
