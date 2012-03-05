@@ -150,8 +150,9 @@ int mm_init(void)
 	PUT(FTRP(bp), PACK(size, 0)); /* Free block footer */
 	PUT(HDRP(NEXT_BLKP(bp)), PACK(0, 1)); /* New epilogue header */
 	
-	temp_next = (char *)GET(heap_listp); // get global next. 
-	PUT(heap_listp, (int)bp); //set global first free block to this block.
+	int minlist = asize / 200; 
+	temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
+	PUT(heap_listp + (minlist * WSIZE), (int)bp); //set global first free block to this block.
 	
 	if((int)temp_next != 0) // if the old global next was not 0, update the old global next's previous free block pointer to this block.
 		PUT(temp_next, (int)bp);
@@ -160,7 +161,8 @@ int mm_init(void)
 	PUT(bp+WSIZE, (int)temp_next);
 
 	/* Coalesce if the previous block was free */
-	return coalesce(bp);
+	//return coalesce(bp);
+	return bp;
  }
 ////////////////////////////////////////////////////////////////
 /* 
@@ -214,42 +216,66 @@ void *mm_malloc(size_t size)
  {
  	/* First fit search */
  	void *bp;
-
- 	for (bp = (char *)GET(heap_listp); (int)bp != 0 && GET_SIZE(HDRP(bp)) > 0; bp = (char *)GET(bp+WSIZE)) {
- 		if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp)))) {
- 		return bp;
- 		}
+ 	
+ 	int minlist = asize / 200;
+ 	
+ 	for(; minlist <= 12; minlist++){
+		for (bp = (char *)GET(heap_listp + (minlist * WSIZE); (int)bp != 0 && GET_SIZE(HDRP(bp)) > 0; bp = (char *)GET(bp+WSIZE)) {
+			if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp)))) {
+				return bp;
+			}
+		}
  	}
  	return NULL; /* No fit */
  }
 
  static void place(void *bp, size_t asize)
  {
- 	void *nxt_bp;
+ 	void *nxt_bp, *temp_next;
  	size_t csize = GET_SIZE(HDRP(bp));
-
+ 	int minlist;
+ 	
  	if ((csize - asize) >= (2*DSIZE)) {
  		PUT(HDRP(bp), PACK(asize, 1));
  		PUT(FTRP(bp), PACK(asize, 1));
  		nxt_bp = NEXT_BLKP(bp);
  		PUT(HDRP(nxt_bp), PACK(csize-asize, 0));
  		PUT(FTRP(nxt_bp), PACK(csize-asize, 0));
- 		PUT(nxt_bp, GET(bp)); //set prev free pointer of new block equal to prev free pointer of old block
- 		PUT(nxt_bp + WSIZE, GET(bp+WSIZE));//set next free pointer of new block equal to nexy free pointer of old block
- 		if(GET(bp) == 0) // if prev pointer is 0 update global first free pointer
- 			PUT(heap_listp, (int)nxt_bp); 
- 		else //else update previous free blocks next pointer
- 			PUT(((char *)GET(bp) + WSIZE), (int)nxt_bp); 
- 		if(GET(bp + WSIZE) != 0) // if next free block is not 0 update next blocks previous pointer
- 			PUT(((char *)GET(bp + WSIZE)), (int)nxt_bp); // update next free blocks previous pointer
+ 		
+ 		//REMOVE BP FROM FREE LIST
+ 		minlist = csize / 200;
+		if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
+ 			PUT(heap_listp+(minlist * WSIZE), 0); 	
+ 		else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
+ 			PUT(heap_listp+(minlist * WSIZE), GET(bp + WSIZE));
+ 			PUT((char *)GET(bp + WSIZE), 0);
+ 		}
+ 		else if (GET(bp) != 0 && GET(bp + WSIZE) == 0) // if prev pointer not 0 and next 0 then make prev's next pointer 0.
+ 			PUT(((char *)GET(bp) + WSIZE), 0);
+ 		else {//if prev pointer and next pointer not 0 update pointers 
+ 			PUT(((char *)GET(bp) + WSIZE), GET(bp + WSIZE));	
+ 			PUT(((char *)GET(bp + WSIZE)), GET(bp));	
+ 		}
+ 		
+ 		//ADD nxt_bp to free list
+ 		minlist = (csize-asize) / 200;
+ 		temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
+ 		PUT(heap_listp + (minlist * WSIZE), (int)nxt_bp); //set global first free block to this block.
+ 		if((int)temp_next != 0) // if the old global next was not 0, update the old global next's previous free block pointer to this block.
+ 			PUT(temp_next, (int)nxt_bp);
+		PUT(nxt_bp, 0); 
+		PUT(nxt_bp+WSIZE, (int)temp_next);
  	}
  	else {
  		PUT(HDRP(bp), PACK(csize, 1));
  		PUT(FTRP(bp), PACK(csize, 1));
- 		if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
- 			PUT(heap_listp, 0); 	
+ 		
+ 		//REMOVE BOP FROM FREE LIST
+ 		minlist = csize / 200;
+		if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
+ 			PUT(heap_listp+(minlist * WSIZE), 0); 	
  		else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
- 			PUT(heap_listp, GET(bp + WSIZE));
+ 			PUT(heap_listp+(minlist * WSIZE), GET(bp + WSIZE));
  			PUT((char *)GET(bp + WSIZE), 0);
  		}
  		else if (GET(bp) != 0 && GET(bp + WSIZE) == 0) // if prev pointer not 0 and next 0 then make prev's next pointer 0.
@@ -277,16 +303,15 @@ void mm_free(void *bp)
 	PUT(HDRP(bp), PACK(size, 0));
 	PUT(FTRP(bp), PACK(size, 0));
 	
-	temp_next = (char *)GET(heap_listp); // get global next. 
-	PUT(heap_listp, (int)bp); //set global first free block to this block.
-	
-	if((int)temp_next != 0) // if the old global next was not 0, update the old global next's previous free block pointer to this block.
-		PUT(temp_next, (int)bp);
-	
-	PUT(bp, 0); 
-	PUT(bp+WSIZE, (int)temp_next);
-	
-	coalesce(bp);
+ 	minlist = size / 200;
+ 	temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
+ 	PUT(heap_listp + (minlist * WSIZE), (int)nxt_bp); //set global first free block to this block.
+ 	if((int)temp_next != 0) // if the old global next was not 0, update the old global next's previous free block pointer to this block.
+ 		PUT(temp_next, (int)nxt_bp);
+	PUT(nxt_bp, 0); 
+	PUT(nxt_bp+WSIZE, (int)temp_next);
+
+	//coalesce(bp);
 }
 ////////////////////////////////////////////////////////////////
  static void *coalesce(void *bp)
