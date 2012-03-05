@@ -254,7 +254,7 @@ void *mm_malloc(size_t size)
  {	 
  	int minlist;
  	void *temp_next;
- 	size_t size;
+ 	int size;
  	
  	size = GET_SIZE(HDRP(bp));
  	minlist = size / 50 / WSIZE;
