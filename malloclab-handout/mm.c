@@ -329,15 +329,8 @@ void mm_free(void *bp)
 	PUT(HDRP(bp), PACK(size, 0));
 	PUT(FTRP(bp), PACK(size, 0));
 
- 	minlist = size / 200;
- 	if(minlist > 21)
- 		minlist = 21; 
- 	temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
- 	PUT(heap_listp + (minlist * WSIZE), (int)bp); //set global first free block to this block.
- 	if((int)temp_next != 0) // if the old global next was not 0, update the old global next's previous free block pointer to this block.
- 		PUT(temp_next, (int)bp);
-	PUT(bp, 0); 
-	PUT(bp+WSIZE, (int)temp_next);
+	//add bp to free list
+	add_free_list(bp);
 
 	coalesce(bp);
 }
