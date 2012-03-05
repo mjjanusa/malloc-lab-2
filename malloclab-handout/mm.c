@@ -87,11 +87,11 @@ int mm_init(void)
 	if ((heap_listp = mem_sbrk(26*WSIZE)) == (void *)-1)
 		return -1;
 	
-	heap_end = mem_heap_hi();
 	PUT(heap_listp, 0); /* Alignment padding */
 
 	PUT(heap_listp + (1*WSIZE), PACK(12*DSIZE, 1)); /* Prologue header */
-	for(int i = 2; i < 24; i++) {
+	int i;
+	for(i = 2; i < 24; i++) {
 		PUT(heap_listp + (i*WSIZE), 0); /* initialize free pointers (one for every increment of 200 words*/
 	}
 	
@@ -283,7 +283,7 @@ void *mm_malloc(size_t size)
  }
  
  
- static void *remove_free_list(void *bp)
+ static void remove_free_list(void *bp)
  {	
  	int minlist; 
  	
@@ -306,7 +306,7 @@ void *mm_malloc(size_t size)
  	}
  }
  
- static void *add_free_list(void *bp)
+ static void add_free_list(void *bp)
  {	 
  	int minlist;
  	void *temp_next;
