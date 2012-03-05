@@ -164,8 +164,8 @@ int mm_init(void)
 	PUT(bp+WSIZE, (int)temp_next);
 
 	/* Coalesce if the previous block was free */
-	//return coalesce(bp);
-	return bp;
+	return coalesce(bp);
+	//return bp;
  }
 ////////////////////////////////////////////////////////////////
 /* 
@@ -240,17 +240,14 @@ void *mm_malloc(size_t size)
  	int minlist;
 
  	if ((csize - asize) >= (2*DSIZE)) {
- 		
- 		//REMOVE BP FROM FREE LIST
- 		remove_free_list(bp);
- 		
  		PUT(HDRP(bp), PACK(asize, 1));
  		PUT(FTRP(bp), PACK(asize, 1));
  		nxt_bp = NEXT_BLKP(bp);
  		PUT(HDRP(nxt_bp), PACK(csize-asize, 0));
  		PUT(FTRP(nxt_bp), PACK(csize-asize, 0));
  		
- 		
+ 		//REMOVE BP FROM FREE LIST
+ 		remove_free_list(csize, bp);
  		
  		//ADD nxt_bp to free list
  		add_free_list(nxt_bp);
@@ -260,16 +257,14 @@ void *mm_malloc(size_t size)
  		PUT(FTRP(bp), PACK(csize, 1));
  		
  		//REMOVE BP FROM FREE LIST
- 		remove_free_list(bp);
+ 		remove_free_list(csize, bp);
  	}
  }
  
  
- static void remove_free_list(void *bp)
+ static void remove_free_list(void *bp, size_t size)
  {	
  	int minlist; 
- 	
- 	size_t size = GET_SIZE(HDRP(bp));
  	
  	minlist = size / 200;
  	if(minlist > 22)
@@ -334,7 +329,7 @@ void mm_free(void *bp)
 	PUT(bp, 0); 
 	PUT(bp+WSIZE, (int)temp_next);
 
-	//coalesce(bp);
+	coalesce(bp);
 }
 ////////////////////////////////////////////////////////////////
  static void *coalesce(void *bp)
@@ -350,9 +345,9 @@ void mm_free(void *bp)
 	else if (prev_alloc && !next_alloc) { /* Case 2 */
 		
  		//REMOVE BP FROM FREE LIST
- 		remove_free_list(bp);
+ 		remove_free_list(size, bp);
  		//REMOVE NEXT FROM FREE LIST
- 		remove_free_list(NEXT_BLKP(bp));
+ 		remove_free_list(GET_SIZE(HDRP(NEXT_BLKP(bp))), NEXT_BLKP(bp));
 		
  		size += GET_SIZE(HDRP(NEXT_BLKP(bp)));
 		PUT(HDRP(bp), PACK(size, 0));
