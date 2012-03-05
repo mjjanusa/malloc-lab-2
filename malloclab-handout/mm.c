@@ -91,7 +91,7 @@ int mm_init(void)
 
 	PUT(heap_listp + (1*WSIZE), PACK(12*DSIZE, 1)); /* Prologue header */
 	int i;
-	for(i = 2; i < 44; i++) {
+	for(i = 2; i < 46; i++) {
 		PUT(heap_listp + (i*WSIZE), 0); /* initialize free pointers (one for every increment of 100 words*/
 	}
 	
@@ -129,8 +129,8 @@ int mm_init(void)
 	PUT(heap_listp + (22*WSIZE), 0); // First Free Pointer  4100 <= size
 	*/
 
-	PUT(heap_listp + (24*WSIZE), PACK(12*DSIZE, 1)); /* Prologue footer */
-	PUT(heap_listp + (25*WSIZE), PACK(0, 1)); /* Epilogue header */
+	PUT(heap_listp + (46*WSIZE), PACK(12*DSIZE, 1)); /* Prologue footer */
+	PUT(heap_listp + (47*WSIZE), PACK(0, 1)); /* Epilogue header */
 	heap_listp += (2*WSIZE);
 
 	/* Extend the empty heap with a free block of CHUNKSIZE bytes */
@@ -221,7 +221,7 @@ void *mm_malloc(size_t size)
  	int minlist = asize / 100;
  	if(minlist > 43)
  		minlist = 43; 
- 	for(; minlist < 22; minlist++){
+ 	for(; minlist < 44; minlist++){
 		for (bp = (char *)GET(heap_listp + (minlist * WSIZE)); (int)bp != 0 && GET_SIZE(HDRP(bp)) > 0; bp = (char *)GET(bp+WSIZE)) {
 			if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp)))) {
 				return bp;
