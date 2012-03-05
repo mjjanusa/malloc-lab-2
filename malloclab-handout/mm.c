@@ -139,9 +139,11 @@ int mm_init(void)
 	char *bp;
 	char *temp_next;
 	size_t size;
-
+	int minlist;
+	
 	/* Allocate an even number of words to maintain alignment */
 	size = (words % 2) ? (words+1) * WSIZE : words * WSIZE;
+	 
 	if ((long)(bp = mem_sbrk(size)) == -1)
 		return NULL;
 
@@ -150,7 +152,7 @@ int mm_init(void)
 	PUT(FTRP(bp), PACK(size, 0)); /* Free block footer */
 	PUT(HDRP(NEXT_BLKP(bp)), PACK(0, 1)); /* New epilogue header */
 	
-	int minlist = size / 200;
+	minlist = size / 200;
 	if(minlist > 21)
  		minlist = 21; 
 	temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
