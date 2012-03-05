@@ -407,7 +407,7 @@ void mm_free(void *bp)
 	}
 
 	else { /* Case 4 */
-		
+		/*
 		//REMOVE BP FROM FREE LIST
  		remove_free_list(bp);
  		//REMOVE PREV FROM FREE LIST
@@ -423,7 +423,7 @@ void mm_free(void *bp)
 		
 		//ADD TO THE FREE LIST
 		add_free_list(bp);
-		
+		*/
 	}
 	return bp;
  }
