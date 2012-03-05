@@ -365,7 +365,7 @@ void mm_free(void *bp)
  		//REMOVE NEXT FROM FREE LIST
  		remove_free_list(NEXT_BLKP(bp));
 		
- 		size = GET_SIZE(HDRP(bp)) + GET_SIZE(HDRP(NEXT_BLKP(bp)));
+ 		size += GET_SIZE(HDRP(NEXT_BLKP(bp)));
 		PUT(HDRP(bp), PACK(size, 0));
 		PUT(FTRP(bp), PACK(size,0));
 		
@@ -383,7 +383,7 @@ void mm_free(void *bp)
  		//REMOVE PREV FROM FREE LIST
  		remove_free_list(PREV_BLKP(bp));
 		
-		size = GET_SIZE(HDRP(bp)) + GET_SIZE(HDRP(PREV_BLKP(bp)));
+		size += GET_SIZE(HDRP(PREV_BLKP(bp)));
 		PUT(FTRP(bp), PACK(size, 0));
 		PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
 		bp = PREV_BLKP(bp);
