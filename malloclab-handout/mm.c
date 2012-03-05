@@ -89,7 +89,7 @@ int mm_init(void)
 	
 	PUT(heap_listp, 0); /* Alignment padding */
 
-	PUT(heap_listp + (1*WSIZE), PACK(12*DSIZE, 1)); /* Prologue header */
+	PUT(heap_listp + (1*WSIZE), PACK(85*DSIZE, 1)); /* Prologue header */
 	int i;
 	for(i = 2; i < 86; i++) {
 		PUT(heap_listp + (i*WSIZE), 0); /* initialize free pointers (one for every increment of 50 words*/
@@ -219,8 +219,8 @@ void *mm_malloc(size_t size)
  	void *bp;
  	
  	int minlist = asize / 50;
- 	if(minlist > 21)
- 		minlist = 21; 
+ 	if(minlist > 83)
+ 		minlist = 83; 
  	for(; minlist < 84; minlist++){
 		for (bp = (char *)GET(heap_listp + (minlist * WSIZE)); (int)bp != 0 && GET_SIZE(HDRP(bp)) > 0; bp = (char *)GET(bp+WSIZE)) {
 			if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp)))) {
