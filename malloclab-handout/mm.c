@@ -294,10 +294,10 @@ void *mm_malloc(size_t size)
  	int minlist; 
  	
  	size_t size = GET_SIZE(HDRP(bp));
+ 	
  	minlist = size / 200;
  	if(minlist > 21)
  		minlist = 21; 
- 	
 	if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
  		PUT(heap_listp+(minlist * WSIZE), 0); 	
  	else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
