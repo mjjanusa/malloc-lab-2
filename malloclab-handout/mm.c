@@ -84,15 +84,15 @@ int mm_init(void)
 {
 	//char *bp;
 	/* Create the initial empty heap */
-	if ((heap_listp = mem_sbrk(26*WSIZE)) == (void *)-1)
+	if ((heap_listp = mem_sbrk(88*WSIZE)) == (void *)-1)
 		return -1;
 	
 	PUT(heap_listp, 0); /* Alignment padding */
 
 	PUT(heap_listp + (1*WSIZE), PACK(12*DSIZE, 1)); /* Prologue header */
 	int i;
-	for(i = 2; i < 24; i++) {
-		PUT(heap_listp + (i*WSIZE), 0); /* initialize free pointers (one for every increment of 200 words*/
+	for(i = 2; i < 86; i++) {
+		PUT(heap_listp + (i*WSIZE), 0); /* initialize free pointers (one for every increment of 50 words*/
 	}
 	
 	/*PUT(heap_listp + (1*WSIZE), 0); // First Free Pointer  0 <= size < 200
@@ -129,8 +129,8 @@ int mm_init(void)
 	PUT(heap_listp + (22*WSIZE), 0); // First Free Pointer  4200 <= size
 	*/
 
-	PUT(heap_listp + (24*WSIZE), PACK(12*DSIZE, 1)); /* Prologue footer */
-	PUT(heap_listp + (25*WSIZE), PACK(0, 1)); /* Epilogue header */
+	PUT(heap_listp + (86*WSIZE), PACK(12*DSIZE, 1)); /* Prologue footer */
+	PUT(heap_listp + (87*WSIZE), PACK(0, 1)); /* Epilogue header */
 	heap_listp += (2*WSIZE);
 
 	/* Extend the empty heap with a free block of CHUNKSIZE bytes */
@@ -218,10 +218,10 @@ void *mm_malloc(size_t size)
  	/* First fit search */
  	void *bp;
  	
- 	int minlist = asize / 200;
+ 	int minlist = asize / 50;
  	if(minlist > 21)
  		minlist = 21; 
- 	for(; minlist < 22; minlist++){
+ 	for(; minlist < 84; minlist++){
 		for (bp = (char *)GET(heap_listp + (minlist * WSIZE)); (int)bp != 0 && GET_SIZE(HDRP(bp)) > 0; bp = (char *)GET(bp+WSIZE)) {
 			if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp)))) {
 				return bp;
@@ -266,9 +266,9 @@ void *mm_malloc(size_t size)
  	
  	size_t size = GET_SIZE(HDRP(bp));
  	
- 	minlist = size / 200;
- 	if(minlist > 21)
- 		minlist = 21; 
+ 	minlist = size / 50;
+ 	if(minlist > 83)
+ 		minlist = 83; 
 	if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
  		PUT(heap_listp+(minlist * WSIZE), 0); 	
  	else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
@@ -289,9 +289,9 @@ void *mm_malloc(size_t size)
  	void *temp_next;
  	
  	size_t size = GET_SIZE(HDRP(bp));
- 	minlist = size / 200;
-	if(minlist > 21)
-		minlist = 21; 
+ 	minlist = size / 50;
+	if(minlist > 83)
+		minlist = 83; 
 	temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
 	PUT(heap_listp + (minlist * WSIZE), (int)bp); //set global first free block to this block.
 
