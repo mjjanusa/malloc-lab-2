@@ -84,7 +84,7 @@ int mm_init(void)
 {
 	//char *bp;
 	/* Create the initial empty heap */
-	if ((heap_listp = mem_sbrk(24*WSIZE)) == (void *)-1)
+	if ((heap_listp = mem_sbrk(26*WSIZE)) == (void *)-1)
 		return -1;
 	PUT(heap_listp + (0*WSIZE), PACK(12*DSIZE, 1)); /* Prologue header */
 
@@ -165,6 +165,7 @@ int mm_init(void)
 
 	/* Coalesce if the previous block was free */
 	//return coalesce(bp);
+	return bp;
  }
 ////////////////////////////////////////////////////////////////
 /* 
