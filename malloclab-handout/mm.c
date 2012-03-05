@@ -84,7 +84,7 @@ int mm_init(void)
 {
 	//char *bp;
 	/* Create the initial empty heap */
-	if ((heap_listp = mem_sbrk(16*WSIZE)) == (void *)-1)
+	if ((heap_listp = mem_sbrk(25*WSIZE)) == (void *)-1)
 		return -1;
 	PUT(heap_listp + (0), 0); /* Alignment padding */
 	PUT(heap_listp + (1*WSIZE), PACK(12*DSIZE, 1)); /* Prologue header */
