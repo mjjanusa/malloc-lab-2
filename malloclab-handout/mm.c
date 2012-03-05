@@ -240,14 +240,17 @@ void *mm_malloc(size_t size)
  	int minlist;
 
  	if ((csize - asize) >= (2*DSIZE)) {
+ 		
+ 		//REMOVE BP FROM FREE LIST
+ 		remove_free_list(bp);
+ 		
  		PUT(HDRP(bp), PACK(asize, 1));
  		PUT(FTRP(bp), PACK(asize, 1));
  		nxt_bp = NEXT_BLKP(bp);
  		PUT(HDRP(nxt_bp), PACK(csize-asize, 0));
  		PUT(FTRP(nxt_bp), PACK(csize-asize, 0));
  		
- 		//REMOVE BP FROM FREE LIST
- 		remove_free_list(bp);
+ 		
  		
  		//ADD nxt_bp to free list
  		add_free_list(nxt_bp);
