@@ -84,12 +84,44 @@ int mm_init(void)
 {
 	//char *bp;
 	/* Create the initial empty heap */
-	if ((heap_listp = mem_sbrk(6*WSIZE)) == (void *)-1)
+	if ((heap_listp = mem_sbrk(16*WSIZE)) == (void *)-1)
 		return -1;
 	PUT(heap_listp + (0), 0); /* Alignment padding */
-	PUT(heap_listp + (1*WSIZE), PACK(2*DSIZE, 1)); /* Prologue header */
-	PUT(heap_listp + (2*WSIZE), 0); /* Prologue First Free Pointer */
-	PUT(heap_listp + (3*WSIZE), 0); /* Alignment padding */
+	PUT(heap_listp + (1*WSIZE), PACK(12*DSIZE, 1)); /* Prologue header */
+	
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  0 <= size < 200*/
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  200 <= size < 400*/
+	
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  400 <= size < 600*/
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  600 <= size < 800*/
+	
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  800 <= size < 1000*/
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  1000 <= size < 1200*/
+	
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  1200 <= size < 1400*/
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  1400 <= size < 1600*/
+	
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  1600 <= size < 1800*/
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  1800 <= size < 2000*/
+	
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  2000 <= size < 2200*/
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  2200 <= size < 2400*/
+	
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  2400 <= size < 2600*/
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  2600 <= size < 2800*/
+	
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  2800 <= size < 3000*/
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  3000 <= size < 3200*/
+	
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  3200 <= size < 3400*/
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  3400 <= size < 3600*/
+	
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  3600 <= size < 3800*/
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  3800 <= size < 4000*/
+	
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  4000 <= size < 4200*/
+	PUT(heap_listp + (2*WSIZE), 0); /* First Free Pointer  4200 <= size/
+	
 	PUT(heap_listp + (4*WSIZE), PACK(2*DSIZE, 1)); /* Prologue footer */
 	PUT(heap_listp + (5*WSIZE), PACK(0, 1)); /* Epilogue header */
 	heap_listp += (2*WSIZE);
