@@ -84,53 +84,53 @@ int mm_init(void)
 {
 	//char *bp;
 	/* Create the initial empty heap */
-	if ((heap_listp = mem_sbrk(48*WSIZE)) == (void *)-1)
+	if ((heap_listp = mem_sbrk(26*WSIZE)) == (void *)-1)
 		return -1;
 	
 	PUT(heap_listp, 0); /* Alignment padding */
 
 	PUT(heap_listp + (1*WSIZE), PACK(12*DSIZE, 1)); /* Prologue header */
 	int i;
-	for(i = 2; i < 46; i++) {
-		PUT(heap_listp + (i*WSIZE), 0); /* initialize free pointers (one for every increment of 100 words*/
+	for(i = 2; i < 24; i++) {
+		PUT(heap_listp + (i*WSIZE), 0); /* initialize free pointers (one for every increment of 200 words*/
 	}
 	
-	/*PUT(heap_listp + (1*WSIZE), 0); // First Free Pointer  0 <= size < 100
-	PUT(heap_listp + (2*WSIZE), 0); // First Free Pointer  100 <= size < 400
+	/*PUT(heap_listp + (1*WSIZE), 0); // First Free Pointer  0 <= size < 200
+	PUT(heap_listp + (2*WSIZE), 0); // First Free Pointer  200 <= size < 400
 
 	PUT(heap_listp + (3*WSIZE), 0); // First Free Pointer  400 <= size < 600
 	PUT(heap_listp + (4*WSIZE), 0); // First Free Pointer  600 <= size < 800
 
 	PUT(heap_listp + (5*WSIZE), 0); // First Free Pointer  800 <= size < 1000
-	PUT(heap_listp + (6*WSIZE), 0); // First Free Pointer  1000 <= size < 1100
+	PUT(heap_listp + (6*WSIZE), 0); // First Free Pointer  1000 <= size < 1200
 
-	PUT(heap_listp + (7*WSIZE), 0); // First Free Pointer  1100 <= size < 1400
+	PUT(heap_listp + (7*WSIZE), 0); // First Free Pointer  1200 <= size < 1400
 	PUT(heap_listp + (8*WSIZE), 0); // First Free Pointer  1400 <= size < 1600
 
 	PUT(heap_listp + (9*WSIZE), 0); // First Free Pointer  1600 <= size < 1800
-	PUT(heap_listp + (10*WSIZE), 0); // First Free Pointer  1800 <= size < 1000
+	PUT(heap_listp + (10*WSIZE), 0); // First Free Pointer  1800 <= size < 2000
 
-	PUT(heap_listp + (11*WSIZE), 0); // First Free Pointer  1000 <= size < 4300
-	PUT(heap_listp + (12*WSIZE), 0); // First Free Pointer  4300 <= size < 2400
+	PUT(heap_listp + (11*WSIZE), 0); // First Free Pointer  2000 <= size < 2200
+	PUT(heap_listp + (12*WSIZE), 0); // First Free Pointer  2200 <= size < 2400
 
 	PUT(heap_listp + (13*WSIZE), 0); // First Free Pointer  2400 <= size < 2600
 	PUT(heap_listp + (14*WSIZE), 0); // First Free Pointer  2600 <= size < 2800
 
 	PUT(heap_listp + (15*WSIZE), 0); // First Free Pointer  2800 <= size < 3000
-	PUT(heap_listp + (16*WSIZE), 0); // First Free Pointer  3000 <= size < 3100
+	PUT(heap_listp + (16*WSIZE), 0); // First Free Pointer  3000 <= size < 3200
 
-	PUT(heap_listp + (17*WSIZE), 0); // First Free Pointer  3100 <= size < 3400
+	PUT(heap_listp + (17*WSIZE), 0); // First Free Pointer  3200 <= size < 3400
 	PUT(heap_listp + (18*WSIZE), 0); // First Free Pointer  3400 <= size < 3600
 
 	PUT(heap_listp + (19*WSIZE), 0); //First Free Pointer  3600 <= size < 3800
 	PUT(heap_listp + (20*WSIZE), 0); // First Free Pointer  3800 <= size < 4000
 
-	PUT(heap_listp + (43*WSIZE), 0); // First Free Pointer  4000 <= size < 4100
-	PUT(heap_listp + (22*WSIZE), 0); // First Free Pointer  4100 <= size
+	PUT(heap_listp + (21*WSIZE), 0); // First Free Pointer  4000 <= size < 4200
+	PUT(heap_listp + (22*WSIZE), 0); // First Free Pointer  4200 <= size
 	*/
 
-	PUT(heap_listp + (46*WSIZE), PACK(12*DSIZE, 1)); /* Prologue footer */
-	PUT(heap_listp + (47*WSIZE), PACK(0, 1)); /* Epilogue header */
+	PUT(heap_listp + (24*WSIZE), PACK(12*DSIZE, 1)); /* Prologue footer */
+	PUT(heap_listp + (25*WSIZE), PACK(0, 1)); /* Epilogue header */
 	heap_listp += (2*WSIZE);
 
 	/* Extend the empty heap with a free block of CHUNKSIZE bytes */
@@ -218,10 +218,10 @@ void *mm_malloc(size_t size)
  	/* First fit search */
  	void *bp;
  	
- 	int minlist = asize / 100;
- 	if(minlist > 43)
- 		minlist = 43; 
- 	for(; minlist < 44; minlist++){
+ 	int minlist = asize / 200;
+ 	if(minlist > 21)
+ 		minlist = 21; 
+ 	for(; minlist < 22; minlist++){
 		for (bp = (char *)GET(heap_listp + (minlist * WSIZE)); (int)bp != 0 && GET_SIZE(HDRP(bp)) > 0; bp = (char *)GET(bp+WSIZE)) {
 			if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp)))) {
 				return bp;
@@ -266,9 +266,9 @@ void *mm_malloc(size_t size)
  	
  	size_t size = GET_SIZE(HDRP(bp));
  	
- 	minlist = size / 100;
- 	if(minlist > 43)
- 		minlist = 43; 
+ 	minlist = size / 200;
+ 	if(minlist > 21)
+ 		minlist = 21; 
 	if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
  		PUT(heap_listp+(minlist * WSIZE), 0); 	
  	else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
@@ -289,9 +289,9 @@ void *mm_malloc(size_t size)
  	void *temp_next;
  	
  	size_t size = GET_SIZE(HDRP(bp));
- 	minlist = size / 100;
-	if(minlist > 43)
-		minlist = 43; 
+ 	minlist = size / 200;
+	if(minlist > 21)
+		minlist = 21; 
 	temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
 	PUT(heap_listp + (minlist * WSIZE), (int)bp); //set global first free block to this block.
 
