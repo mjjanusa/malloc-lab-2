@@ -129,7 +129,7 @@ int mm_init(void)
 	PUT(heap_listp + (22*WSIZE), 0); // First Free Pointer  4200 <= size
 	*/
 
-	PUT(heap_listp + (86*WSIZE), PACK(12*DSIZE, 1)); /* Prologue footer */
+	PUT(heap_listp + (86*WSIZE), PACK(85*DSIZE, 1)); /* Prologue footer */
 	PUT(heap_listp + (87*WSIZE), PACK(0, 1)); /* Epilogue header */
 	heap_listp += (2*WSIZE);
 
