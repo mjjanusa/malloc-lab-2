@@ -268,45 +268,12 @@ void mm_free(void *bp)
 	}
 
 	else if (prev_alloc && !next_alloc) { /* Case 2 */
-		
-		//REMOVE NEXT FROM FREE LIST
-		char *next = NEXT_BLKP(bp);
-		if(GET(next) == 0 && GET(next + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
- 			PUT(heap_listp, 0); 	
- 		else if (GET(next) == 0 && GET(next + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
- 			PUT(heap_listp, GET(next + WSIZE));
- 			PUT((char *)GET(next + WSIZE), 0);
- 		}
- 		else if (GET(next) != 0 && GET(next + WSIZE) == 0) // if prev pointer not 0 and next 0 then make prev's next pointer 0.
- 			PUT(((char *)GET(next) + WSIZE), 0);
- 		else {//if prev pointer and next pointer not 0 update pointers 
- 			PUT(((char *)GET(next) + WSIZE), GET(next + WSIZE));	
- 			PUT(((char *)GET(next + WSIZE)), GET(next));	
- 		}
-		
 		size += GET_SIZE(HDRP(NEXT_BLKP(bp)));
-		
 		PUT(HDRP(bp), PACK(size, 0));
 		PUT(FTRP(bp), PACK(size,0));
 	}
 
 	else if (!prev_alloc && next_alloc) { /* Case 3 */
-		
-		
-		//REMOVE BP FROM FREE LIST
-		if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
- 			PUT(heap_listp, 0); 	
- 		else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
- 			PUT(heap_listp, GET(bp + WSIZE));
- 			PUT((char *)GET(bp + WSIZE), 0);
- 		}
- 		else if (GET(bp) != 0 && GET(bp + WSIZE) == 0) // if prev pointer not 0 and next 0 then make prev's next pointer 0.
- 			PUT(((char *)GET(bp) + WSIZE), 0);
- 		else {//if prev pointer and next pointer not 0 update pointers 
- 			PUT(((char *)GET(bp) + WSIZE), GET(bp + WSIZE));	
- 			PUT(((char *)GET(bp + WSIZE)), GET(bp));	
- 		}
-		
 		size += GET_SIZE(HDRP(PREV_BLKP(bp)));
 		PUT(FTRP(bp), PACK(size, 0));
 		PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
@@ -314,36 +281,6 @@ void mm_free(void *bp)
 	}
 
 	else { /* Case 4 */
-		
-		//REMOVE NEXT FROM FREE LIST
-		char *next = NEXT_BLKP(bp);
-		if(GET(next) == 0 && GET(next + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
- 			PUT(heap_listp, 0); 	
- 		else if (GET(next) == 0 && GET(next + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
- 			PUT(heap_listp, GET(next + WSIZE));
- 			PUT((char *)GET(next + WSIZE), 0);
- 		}
- 		else if (GET(next) != 0 && GET(next + WSIZE) == 0) // if prev pointer not 0 and next 0 then make prev's next pointer 0.
- 			PUT(((char *)GET(next) + WSIZE), 0);
- 		else {//if prev pointer and next pointer not 0 update pointers 
- 			PUT(((char *)GET(next) + WSIZE), GET(next + WSIZE));	
- 			PUT(((char *)GET(next + WSIZE)), GET(next));	
- 		}
- 		
- 		//REMOVE BP FROM FREE LIST
-		if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
- 			PUT(heap_listp, 0); 	
- 		else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
- 			PUT(heap_listp, GET(bp + WSIZE));
- 			PUT((char *)GET(bp + WSIZE), 0);
- 		}
- 		else if (GET(bp) != 0 && GET(bp + WSIZE) == 0) // if prev pointer not 0 and next 0 then make prev's next pointer 0.
- 			PUT(((char *)GET(bp) + WSIZE), 0);
- 		else {//if prev pointer and next pointer not 0 update pointers 
- 			PUT(((char *)GET(bp) + WSIZE), GET(bp + WSIZE));	
- 			PUT(((char *)GET(bp + WSIZE)), GET(bp));	
- 		}
-		
 		size += GET_SIZE(HDRP(PREV_BLKP(bp))) +
 		GET_SIZE(FTRP(NEXT_BLKP(bp)));
 		PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
