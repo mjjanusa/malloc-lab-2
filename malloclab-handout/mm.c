@@ -254,8 +254,9 @@ void *mm_malloc(size_t size)
  {	 
  	int minlist;
  	void *temp_next;
+ 	size_t size;
  	
- 	size_t size = GET_SIZE(HDRP(bp));
+ 	size = GET_SIZE(HDRP(bp));
  	minlist = size / 50 / WSIZE;
 	if(minlist > 83)
 		minlist = 83; 
