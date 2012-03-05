@@ -262,7 +262,7 @@ void *mm_malloc(size_t size)
  }
  
  
- static void remove_free_list(void *bp, size_t size)
+ static void remove_free_list(size_t size, void *bp)
  {	
  	int minlist; 
  	
