@@ -164,7 +164,8 @@ int mm_init(void)
 	PUT(bp+WSIZE, (int)temp_next);
 
 	/* Coalesce if the previous block was free */
-	return coalesce(bp);
+	//return coalesce(bp);
+	return bp;
  }
 ////////////////////////////////////////////////////////////////
 /* 
@@ -366,7 +367,7 @@ void mm_free(void *bp)
 	PUT(bp, 0); 
 	PUT(bp+WSIZE, (int)temp_next);
 
-	coalesce(bp);
+	//coalesce(bp);
 }
 ////////////////////////////////////////////////////////////////
  static void *coalesce(void *bp)
