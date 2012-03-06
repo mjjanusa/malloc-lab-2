@@ -195,10 +195,12 @@ void *mm_malloc(size_t size)
  	if(minlist < global_minlist)
  		minlist = global_minlist;
  	for(; minlist < 84; minlist++){
-		for (bp = (char *)GET(heap_listp + (minlist * WSIZE)); (int)bp != 0 && GET_SIZE(HDRP(bp)) > 0; bp = (char *)GET(bp+WSIZE)) {
+ 		int i = 0;
+		for (bp = (char *)GET(heap_listp + (minlist * WSIZE)); (int)bp != 0 && GET_SIZE(HDRP(bp)) > 0 && i < 150; bp = (char *)GET(bp+WSIZE)) {
 			if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp)))) {
 				return bp;
 			}
+			i++;
 		}
  	}
  	return NULL; /* No fit */
