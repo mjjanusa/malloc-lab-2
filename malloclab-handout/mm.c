@@ -186,14 +186,9 @@ void *mm_malloc(size_t size)
  	/* First fit search */
  	void *bp;
  	
- 	if(global_minlist == 0)
- 		return NULL;
- 	
  	int minlist = asize / 50;
  	if(minlist > 83)
  		minlist = 83; 
- 	if(minlist < global_minlist)
- 		minlist = global_minlist;
  	for(; minlist < 84; minlist++){
 		for (bp = (char *)GET(heap_listp + (minlist * WSIZE)); (int)bp != 0 && GET_SIZE(HDRP(bp)) > 0; bp = (char *)GET(bp+WSIZE)) {
 			if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp)))) {
@@ -244,13 +239,10 @@ void *mm_malloc(size_t size)
  		minlist = 83; 
 	if(GET(bp) == 0 && GET(bp + WSIZE) == 0) { // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
  		PUT(heap_listp+(minlist * WSIZE), 0);
- 		if(global_minlist == minlist) { //if this list was the global min list update global minlist.
- 			int i;
- 			for (i = minlist; GET(heap_listp+(i * WSIZE)) == 0 && i <= 83; i++);
- 			if(GET(heap_listp+(i * WSIZE)) == 0)
- 				global_minlist = 0;
- 			else
- 				global_minlist = i; 			
+ 		if(global_minlist == minlist) {
+ 			temp_prev = (char *)GET(heap_listp + (minlist * WSIZE));
+ 			for (; (int)temp_cur != 0 && GET_SIZE(HDRP(temp_cur)) < size; temp_cur = (char *)GET(temp_cur+WSIZE))	
+ 			
  		}
  	}
  	else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
@@ -277,7 +269,7 @@ void *mm_malloc(size_t size)
  	minlist = size / 50;
 	if(minlist > 83)
 		minlist = 83;
-	if(global_minlist > minlist || global_minlist == 0)
+	if(global_minlist > minlist)
 		global_minlist = minlist; //update global min list
 	temp_cur = (char *)GET(heap_listp + (minlist * WSIZE));
 	if(temp_cur == 0){
@@ -297,7 +289,7 @@ void *mm_malloc(size_t size)
 		if((int)temp_next != 0) // if the old global next was not 0, update the old global next's previous free block pointer to this block.
 		PUT(temp_next, (int)bp);
 	
-		PUT(bp, (int)temp_cur); 
+		PUT(bp, temp_cur); 
 		PUT(bp+WSIZE, (int)temp_next);
 		}
 }
