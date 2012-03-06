@@ -330,15 +330,15 @@ void mm_free(void *bp)
 ////////////////////////////////////////////////////////////////
  static void *coalesce(void *bp)
  {
-	size_t prev_alloc = GET_ALLOC(FTRP(PREV_BLKP(bp)));
+	/*size_t prev_alloc = GET_ALLOC(FTRP(PREV_BLKP(bp)));
 	size_t next_alloc = GET_ALLOC(HDRP(NEXT_BLKP(bp)));
 	size_t size = GET_SIZE(HDRP(bp));
 
-	if (prev_alloc && next_alloc) { /* Case 1 */
+	if (prev_alloc && next_alloc) { // Case 1 
 		return bp;
 	}
 
-	else if (prev_alloc && !next_alloc) { /* Case 2 */
+	else if (prev_alloc && !next_alloc) { // Case 2 
 
  		//REMOVE BP FROM FREE LIST
  		remove_free_list(bp);
@@ -355,7 +355,7 @@ void mm_free(void *bp)
 
 	}
 
-	else if (!prev_alloc && next_alloc) { /* Case 3 */
+	else if (!prev_alloc && next_alloc) { // Case 3 
 
 
 		//REMOVE BP FROM FREE LIST
@@ -373,7 +373,7 @@ void mm_free(void *bp)
 
 	}
 
-	else { /* Case 4 */
+	else { // Case 4 
 
 		//REMOVE BP FROM FREE LIST
  		remove_free_list(bp);
@@ -392,7 +392,7 @@ void mm_free(void *bp)
 		add_free_list(bp);
 
 	}
-	return bp;
+	return bp;*/
  }
 ////////////////////////////////////////////////////////////////
 /*
