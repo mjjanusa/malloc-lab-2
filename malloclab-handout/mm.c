@@ -247,10 +247,11 @@ void *mm_malloc(size_t size)
  		if(global_minlist == minlist) { //if this list was the global min list update global minlist.
  			int i;
  			for (i = minlist; GET(heap_listp+(i * WSIZE)) == 0 && i <= 83; i++);
+ 			i--;
  			if(GET(heap_listp+(i * WSIZE)) == 0)
  				global_minlist = 0;
  			else
- 				global_minlist = i-1; 			
+ 				global_minlist = i; 			
  		}
  	}
  	else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
