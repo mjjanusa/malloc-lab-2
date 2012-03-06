@@ -393,7 +393,7 @@ void *mm_realloc(void *ptr, size_t size)
 	 assert ( size <= size_prev);
     	 PUT(HDRP(oldptr), PACK(size, 1)); // resize old 
 	 PUT(FTRP(oldptr), PACK(size, 1)); // resize old
-	/* newptr = oldptr; // set new ptr to old ptr
+	 newptr = oldptr; // set new ptr to old ptr
 	 oldptr =  (NEXT_BLKP(newptr)); // reset old pointer to the new (empty) block
 	 PUT(HDRP(oldptr), PACK(size_prev - size, 0));
 	 PUT(FTRP(oldptr), PACK(size_prev - size, 0));
@@ -401,7 +401,7 @@ void *mm_realloc(void *ptr, size_t size)
 	//add oldptr to free list
 	add_free_list(oldptr);
 	//coalesce
-	coalesce(oldptr);*/
+	coalesce(oldptr);
 	return oldptr;
 	}
     }
