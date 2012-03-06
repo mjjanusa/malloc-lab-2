@@ -252,21 +252,37 @@ void *mm_malloc(size_t size)
  {	 
  	int minlist;
  	void *temp_next;
+ 	void *temp_cur;
+ 	void *temp_prev;
  	int size;
  	
  	size = GET_SIZE(HDRP(bp));
  	minlist = size / 50;
 	if(minlist > 83)
 		minlist = 83; 
-	temp_next = (char *)GET(heap_listp + (minlist * WSIZE)); // get global next. 
-	PUT(heap_listp + (minlist * WSIZE), (int)bp); //set global first free block to this block.
-
-	if((int)temp_next != 0) // if the old global next was not 0, update the old global next's previous free block pointer to this block.
+	temp_cur = (char *)GET(heap_listp + (minlist * WSIZE))
+	if(temp_cur == 0){
+		PUT(heap_listp + (minlist * WSIZE), (int)bp);	
+		PUT(bp, 0); 
+		PUT(bp+WSIZE, 0;
+	}
+	else {
+		temp_prev = (char *)GET(heap_listp + (minlist * WSIZE))
+		for (; (int)temp_cur != 0 && GET_SIZE(HDRP(temp_cur)) < size; temp_cur = (char *)GET(temp_cur+WSIZE))
+			temp_prev = temp_cur;
+		
+		temp_cur = temp_prev;
+		temp_next = (char *)GET(temp_cur + WSIZE); // get global next. 
+		PUT(temp_cur + WSIZE, (int)bp); //set global first free block to this block.
+	
+		if((int)temp_next != 0) // if the old global next was not 0, update the old global next's previous free block pointer to this block.
 		PUT(temp_next, (int)bp);
-
-	PUT(bp, 0); 
-	PUT(bp+WSIZE, (int)temp_next);
- }
+	
+		PUT(bp, temp_cur); 
+		PUT(bp+WSIZE, (int)temp_next);
+		}
+}
+ 
 
 ////////////////////////////////////////////////////////////////////
 
@@ -507,3 +523,4 @@ void *mm_realloc(void *ptr, size_t size)
 	    return newptr;
     }
 }
+
