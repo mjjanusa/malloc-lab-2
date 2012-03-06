@@ -238,7 +238,7 @@ void *mm_malloc(size_t size)
  {	
  	int minlist; 
  	int size;
- 	freecount--; 
+ 	free_count--; 
  	
  	size = GET_SIZE(HDRP(bp));
  	
@@ -248,7 +248,7 @@ void *mm_malloc(size_t size)
 	if(GET(bp) == 0 && GET(bp + WSIZE) == 0) { // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
  		PUT(heap_listp+(minlist * WSIZE), 0);
  		if(global_minlist == minlist) { //if this list was the global min list update global minlist.
- 			if(freecount > 0){
+ 			if(free_count > 0){
  			int i;
  			for (i = minlist; GET(heap_listp+(i * WSIZE)) == 0; i++);
  			global_minlist = i;
