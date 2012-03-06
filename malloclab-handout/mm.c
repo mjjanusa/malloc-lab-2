@@ -111,9 +111,7 @@ int mm_init(void)
  static void *extend_heap(size_t words)
  {
 	char *bp;
-	char *temp_next;
 	size_t size;
-	int minlist;
 
 	/* Allocate an even number of words to maintain alignment */
 	size = (words % 2) ? (words+1) * WSIZE : words * WSIZE;
@@ -202,7 +200,6 @@ void *mm_malloc(size_t size)
  {
  	void *nxt_bp;
  	size_t csize = GET_SIZE(HDRP(bp));
- 	int minlist;
 
  	if ((csize - asize) >= (2*DSIZE)) {
  		
@@ -280,9 +277,6 @@ void *mm_malloc(size_t size)
 //void mm_free(void *ptr)
 void mm_free(void *bp)
 {
-	void *temp_next;
-	int minlist;
-
 	size_t size = GET_SIZE(HDRP(bp));
 
 	PUT(HDRP(bp), PACK(size, 0));
