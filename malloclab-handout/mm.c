@@ -260,7 +260,7 @@ void *mm_malloc(size_t size)
  	minlist = size / 50;
 	if(minlist > 83)
 		minlist = 83; 
-	temp_cur = (char *)GET(heap_listp + (minlist * WSIZE))
+	temp_cur = (char *)GET(heap_listp + (minlist * WSIZE));
 	if(temp_cur == 0){
 		PUT(heap_listp + (minlist * WSIZE), (int)bp);	
 		PUT(bp, 0); 
