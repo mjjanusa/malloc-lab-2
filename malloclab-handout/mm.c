@@ -101,7 +101,7 @@ int mm_init(void)
 	PUT(heap_listp + (86*WSIZE), PACK(43*DSIZE, 1)); /* Prologue footer */
 	PUT(heap_listp + (87*WSIZE), PACK(0, 1)); /* Epilogue header */
 	heap_listp += (2*WSIZE);
-	global_minlist = -1;
+	global_minlist = 100;
 
 	/* Extend the empty heap with a free block of CHUNKSIZE bytes */
 	if (extend_heap(CHUNKSIZE/WSIZE) == NULL)
@@ -186,7 +186,7 @@ void *mm_malloc(size_t size)
  	/* First fit search */
  	void *bp;
  	
- 	if(global_minlist == -1)
+ 	if(global_minlist == 100)
  		return NULL;
  	
  	int minlist = asize / 50;
@@ -247,11 +247,11 @@ void *mm_malloc(size_t size)
  		if(global_minlist == minlist) { //if this list was the global min list update global minlist.
  			int i;
  			for (i = minlist; GET(heap_listp+(i * WSIZE)) == 0 && i <= 83; i++);
- 			
- 			if(i == 83)
- 				global_minlist = -1;
+ 			i--;
+ 			if(GET(heap_listp+(i * WSIZE)) == 0)
+ 				global_minlist = 100;
  			else
- 				global_minlist = i-1; 			
+ 				global_minlist = i; 			
  		}
  	}
  	else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
@@ -278,7 +278,7 @@ void *mm_malloc(size_t size)
  	minlist = size / 50;
 	if(minlist > 83)
 		minlist = 83;
-	if(global_minlist > minlist || global_minlist == -1)
+	if(global_minlist > minlist || global_minlist == 100)
 		global_minlist = minlist; //update global min list
 	temp_cur = (char *)GET(heap_listp + (minlist * WSIZE));
 	if(temp_cur == 0){
