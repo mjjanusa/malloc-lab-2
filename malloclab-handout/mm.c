@@ -186,7 +186,7 @@ void *mm_malloc(size_t size)
  	/* First fit search */
  	void *bp;
  	
- 	if(global_minlist == 0)
+ 	if(global_minlist == -1)
  		return NULL;
  	
  	int minlist = asize / 50;
@@ -249,7 +249,7 @@ void *mm_malloc(size_t size)
  			for (i = minlist; GET(heap_listp+(i * WSIZE)) == 0 && i <= 83; i++);
  			i--;
  			if(GET(heap_listp+(i * WSIZE)) == 0)
- 				global_minlist = 0;
+ 				global_minlist = -1;
  			else
  				global_minlist = i; 			
  		}
@@ -278,7 +278,7 @@ void *mm_malloc(size_t size)
  	minlist = size / 50;
 	if(minlist > 83)
 		minlist = 83;
-	if(global_minlist > minlist || global_minlist == 0)
+	if(global_minlist > minlist || global_minlist == -1)
 		global_minlist = minlist; //update global min list
 	temp_cur = (char *)GET(heap_listp + (minlist * WSIZE));
 	if(temp_cur == 0){
