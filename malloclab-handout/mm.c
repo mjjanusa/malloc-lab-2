@@ -129,8 +129,6 @@ int mm_init(void)
 	PUT(FTRP(bp), PACK(size, 0)); /* Free block footer */
 	PUT(HDRP(NEXT_BLKP(bp)), PACK(0, 1)); /* New epilogue header */
 
-	add_free_list(bp);
-
 	/* Coalesce if the previous block was free */
 	return coalesce(bp);
 	//return bp;
@@ -322,9 +320,6 @@ void mm_free(void *bp)
 	PUT(HDRP(bp), PACK(size, 0));
 	PUT(FTRP(bp), PACK(size, 0));
 
-	//add bp to free list
-	add_free_list(bp);
-
 	coalesce(bp);
 }
 ////////////////////////////////////////////////////////////////
@@ -340,8 +335,6 @@ void mm_free(void *bp)
 
 	else if (prev_alloc && !next_alloc) { // Case 2 
 
- 		//REMOVE BP FROM FREE LIST
- 		remove_free_list(bp);
  		//REMOVE NEXT FROM FREE LIST
  		remove_free_list(NEXT_BLKP(bp));
 
@@ -357,9 +350,6 @@ void mm_free(void *bp)
 
 	else if (!prev_alloc && next_alloc) { // Case 3 
 
-
-		//REMOVE BP FROM FREE LIST
- 		remove_free_list(bp);
  		//REMOVE PREV FROM FREE LIST
  		remove_free_list(PREV_BLKP(bp));
 
@@ -375,8 +365,6 @@ void mm_free(void *bp)
 
 	else { // Case 4 
 
-		//REMOVE BP FROM FREE LIST
- 		remove_free_list(bp);
  		//REMOVE PREV FROM FREE LIST
  		remove_free_list(PREV_BLKP(bp));
  		//REMOVE NEXT FROM FREE LIST
