@@ -8,6 +8,7 @@
  *
  * NOTE TO STUDENTS: Replace this header comment with your own header
  * comment that gives a high level description of your solution.
+ * PROGRESS!
  */
 #include <stdio.h>
 #include <stdlib.h>
