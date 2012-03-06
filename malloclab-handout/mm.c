@@ -45,6 +45,7 @@ team_t team = {
 
 #define SIZE_T_SIZE (ALIGN(sizeof(size_t)))
 static char *heap_listp = 0;	//points to the prologue block or first block
+int global_minlist = 0;  //GLOBAL FIRST LIST WITH FREE BLOCKS.
 
 ///////////////////////////////////////////////////////////////
 /* Basic constants and macros */
@@ -100,6 +101,7 @@ int mm_init(void)
 	PUT(heap_listp + (86*WSIZE), PACK(43*DSIZE, 1)); /* Prologue footer */
 	PUT(heap_listp + (87*WSIZE), PACK(0, 1)); /* Epilogue header */
 	heap_listp += (2*WSIZE);
+	global_minlist = 0;
 
 	/* Extend the empty heap with a free block of CHUNKSIZE bytes */
 	if (extend_heap(CHUNKSIZE/WSIZE) == NULL)
@@ -184,9 +186,14 @@ void *mm_malloc(size_t size)
  	/* First fit search */
  	void *bp;
  	
+ 	if(global_minlist = 0)
+ 		return null;
+ 	
  	int minlist = asize / 50;
  	if(minlist > 83)
  		minlist = 83; 
+ 	if(minlist < global_minlist)
+ 		minlist = global_minlist;
  	for(; minlist < 84; minlist++){
 		for (bp = (char *)GET(heap_listp + (minlist * WSIZE)); (int)bp != 0 && GET_SIZE(HDRP(bp)) > 0; bp = (char *)GET(bp+WSIZE)) {
 			if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp)))) {
@@ -235,8 +242,15 @@ void *mm_malloc(size_t size)
  	minlist = size / 50;
  	if(minlist > 83)
  		minlist = 83; 
-	if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
- 		PUT(heap_listp+(minlist * WSIZE), 0); 	
+	if(GET(bp) == 0 && GET(bp + WSIZE) == 0) { // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
+ 		PUT(heap_listp+(minlist * WSIZE), 0);
+ 		if(global_minlist == minlist) { //if this list was the global min list update global minlist.
+ 			int i;
+ 			for (i = minlist; GET(heap_listp+(i * WSIZE)) == 0 && i <= 83; i++);
+ 			assert (GET(heap_listp+(i * WSIZE)) && i <= 83);
+ 			global_minlist = temp_cur; 			
+ 		}
+ 	}
  	else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
  		PUT(heap_listp+(minlist * WSIZE), GET(bp + WSIZE));
  		PUT((char *)GET(bp + WSIZE), 0);
@@ -260,7 +274,9 @@ void *mm_malloc(size_t size)
  	size = GET_SIZE(HDRP(bp));
  	minlist = size / 50;
 	if(minlist > 83)
-		minlist = 83; 
+		minlist = 83;
+	if(global_minlist > minlist || global_minlist == 0)
+		global_minlist = minlist; //update global min list
 	temp_cur = (char *)GET(heap_listp + (minlist * WSIZE));
 	if(temp_cur == 0){
 		PUT(heap_listp + (minlist * WSIZE), (int)bp);	
