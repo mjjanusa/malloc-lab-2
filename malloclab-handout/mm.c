@@ -252,9 +252,10 @@ void *mm_malloc(size_t size)
  					break;
  				} 					
  			}
- 			if(i != 100)
+ 			if(i != 100){
  				i--;
  			assert(GET(heap_listp+(i * WSIZE)) != 0);
+ 			}
  			global_minlist = i; 			
  		}
  	}
