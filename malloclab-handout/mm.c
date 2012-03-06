@@ -246,7 +246,7 @@ void *mm_malloc(size_t size)
  		PUT(heap_listp+(minlist * WSIZE), 0);
  		if(global_minlist == minlist) { //if this list was the global min list update global minlist.
  			int i;
- 			for (i = 0; GET(heap_listp+(i * WSIZE)) == 0 && i <= 83; i++);
+ 			for (i = minlist; GET(heap_listp+(i * WSIZE)) == 0 && i <= 83; i++);
  			if(GET(heap_listp+(i * WSIZE)) == 0)
  				global_minlist = 0;
  			else
