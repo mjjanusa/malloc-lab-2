@@ -330,7 +330,7 @@ void mm_free(void *bp)
 ////////////////////////////////////////////////////////////////
  static void *coalesce(void *bp)
  {
-	/*size_t prev_alloc = GET_ALLOC(FTRP(PREV_BLKP(bp)));
+	size_t prev_alloc = GET_ALLOC(FTRP(PREV_BLKP(bp)));
 	size_t next_alloc = GET_ALLOC(HDRP(NEXT_BLKP(bp)));
 	size_t size = GET_SIZE(HDRP(bp));
 
@@ -364,8 +364,8 @@ void mm_free(void *bp)
  		remove_free_list(PREV_BLKP(bp));
 
 		size += GET_SIZE(HDRP(PREV_BLKP(bp)));
-		PUT(FTRP(bp), PACK(size, 0));
 		PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
+		PUT(FTRP(PREV_BLKP(bp)), PACK(size, 0));
 		bp = PREV_BLKP(bp);
 
 		//ADD TO THE FREE LIST
@@ -385,13 +385,13 @@ void mm_free(void *bp)
 		size += GET_SIZE(HDRP(PREV_BLKP(bp))) +
 		GET_SIZE(FTRP(NEXT_BLKP(bp)));
 		PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
-		PUT(FTRP(NEXT_BLKP(bp)), PACK(size, 0));
+		PUT(FTRP(PREV_BLKP(bp)), PACK(size, 0));
 		bp = PREV_BLKP(bp);
 
 		//ADD TO THE FREE LIST
 		add_free_list(bp);
 
-	}*/
+	}
 	return bp;
  }
 ////////////////////////////////////////////////////////////////
