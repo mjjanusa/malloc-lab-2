@@ -391,8 +391,8 @@ void mm_free(void *bp)
 		//ADD TO THE FREE LIST
 		add_free_list(bp);
 
-	}
-	return bp;*/
+	}*/
+	return bp;
  }
 ////////////////////////////////////////////////////////////////
 /*
