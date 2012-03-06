@@ -384,7 +384,7 @@ void *mm_realloc(void *ptr, size_t size)
     if (oldptr == NULL)	//if ptr is NULL, the call is equivalent to mm malloc(size)
 	return mm_malloc(size);    
     if(increase == 0 && (size_prev - size - DSIZE) > (2*DSIZE)){ // if shrinking ptr and released space will be large enough to be a block
-    	 if (size <= DSIZE)
+    	/* if (size <= DSIZE)
     	    	size = 2*DSIZE;
     	 else
 	  	size =  DSIZE * ((size + (DSIZE) + (DSIZE-1)) / DSIZE); // align size
@@ -400,7 +400,7 @@ void *mm_realloc(void *ptr, size_t size)
 	add_free_list(oldptr);
 	//coalesce
 	coalesce(oldptr);
-	return newptr;
+	return newptr;*/
     }
     if(increase == 0) {//if shrinking ptr and released space to small to be a block or size is the same return same ptr
     	    newptr = mm_malloc(size);
