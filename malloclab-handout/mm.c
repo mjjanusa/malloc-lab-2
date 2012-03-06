@@ -46,6 +46,7 @@ team_t team = {
 #define SIZE_T_SIZE (ALIGN(sizeof(size_t)))
 static char *heap_listp = 0;	//points to the prologue block or first block
 int global_minlist = 0;  //GLOBAL FIRST LIST WITH FREE BLOCKS.
+int free_count = 0;
 
 ///////////////////////////////////////////////////////////////
 /* Basic constants and macros */
@@ -102,6 +103,7 @@ int mm_init(void)
 	PUT(heap_listp + (87*WSIZE), PACK(0, 1)); /* Epilogue header */
 	heap_listp += (2*WSIZE);
 	global_minlist = 100;
+	free_count = 0;
 
 	/* Extend the empty heap with a free block of CHUNKSIZE bytes */
 	if (extend_heap(CHUNKSIZE/WSIZE) == NULL)
@@ -186,7 +188,7 @@ void *mm_malloc(size_t size)
  	/* First fit search */
  	void *bp;
  	
- 	if(global_minlist == 100)
+ 	if(free_count == 0)
  		return NULL;
  	
  	int minlist = asize / 50;
@@ -236,6 +238,7 @@ void *mm_malloc(size_t size)
  {	
  	int minlist; 
  	int size;
+ 	freecount--; 
  	
  	size = GET_SIZE(HDRP(bp));
  	
@@ -245,17 +248,12 @@ void *mm_malloc(size_t size)
 	if(GET(bp) == 0 && GET(bp + WSIZE) == 0) { // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
  		PUT(heap_listp+(minlist * WSIZE), 0);
  		if(global_minlist == minlist) { //if this list was the global min list update global minlist.
+ 			if(freecount > 0){
  			int i;
- 			for (i = minlist; GET(heap_listp+(i * WSIZE)) == 0; i++){
- 				if(i == 84){
- 					i = 100;
- 					break;
- 				} 					
+ 			for (i = minlist; GET(heap_listp+(i * WSIZE)) == 0; i++);
+ 			global_minlist = i;
  			}
- 			if(i != 100){
- 			assert(GET(heap_listp+(i * WSIZE)) != 0);
- 			}
- 			global_minlist = i; 			
+			else(global_minlist = 100); 			
  		}
  	}
  	else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
@@ -277,6 +275,8 @@ void *mm_malloc(size_t size)
  	void *temp_cur;
  	void *temp_prev;
  	int size;
+ 	
+ 	free_count++;
  	
  	size = GET_SIZE(HDRP(bp));
  	minlist = size / 50;
