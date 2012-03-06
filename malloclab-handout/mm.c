@@ -315,12 +315,12 @@ void *mm_malloc(size_t size)
 //void mm_free(void *ptr)
 void mm_free(void *bp)
 {
-	/*size_t size = GET_SIZE(HDRP(bp));
+	size_t size = GET_SIZE(HDRP(bp));
 
 	PUT(HDRP(bp), PACK(size, 0));
 	PUT(FTRP(bp), PACK(size, 0));
 
-	coalesce(bp);*/
+	coalesce(bp);
 }
 ////////////////////////////////////////////////////////////////
  static void *coalesce(void *bp)
