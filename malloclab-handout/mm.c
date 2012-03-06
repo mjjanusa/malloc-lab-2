@@ -264,7 +264,7 @@ void *mm_malloc(size_t size)
 	if(temp_cur == 0){
 		PUT(heap_listp + (minlist * WSIZE), (int)bp);	
 		PUT(bp, 0); 
-		PUT(bp+WSIZE, 0;
+		PUT(bp+WSIZE, 0);
 	}
 	else {
 		temp_prev = (char *)GET(heap_listp + (minlist * WSIZE))
