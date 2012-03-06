@@ -251,7 +251,7 @@ void *mm_malloc(size_t size)
  			if(i == 83)
  				global_minlist = -1;
  			else
- 				global_minlist = i; 			
+ 				global_minlist = i-1; 			
  		}
  	}
  	else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
