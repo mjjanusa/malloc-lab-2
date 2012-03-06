@@ -406,14 +406,7 @@ void *mm_realloc(void *ptr, size_t size)
 	}
     }
     if(increase == 0) {//if shrinking ptr and released space to small to be a block or size is the same return same ptr
-    	    newptr = mm_malloc(size);
-    	    copySize = GET_SIZE(HDRP(oldptr));
-	    if (size < copySize)
-		    copySize = size;
-	    //copySize = *(size_t *)((char *)oldptr - SIZE_T_SIZE);
-	    memcpy(newptr, oldptr, copySize);
-	    mm_free(oldptr);
-	    return newptr;
+    	    return ptr;
     }
     else { // size is greater than before
     	    //if next is unallocated and combining next with this block would fufill new size requirement merge the blocks
