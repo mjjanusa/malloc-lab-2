@@ -45,7 +45,6 @@ team_t team = {
 
 #define SIZE_T_SIZE (ALIGN(sizeof(size_t)))
 static char *heap_listp = 0;	//points to the prologue block or first block
-int global_minlist = 0;  //GLOBAL FIRST LIST WITH FREE BLOCKS.
 
 ///////////////////////////////////////////////////////////////
 /* Basic constants and macros */
@@ -88,11 +87,11 @@ int mm_init(void)
 	/* Create the initial empty heap */
 	if ((heap_listp = mem_sbrk(88*WSIZE)) == (void *)-1)
 		return -1;
-	
+
 	PUT(heap_listp, 0); /* Alignment padding */
 
 	PUT(heap_listp + (1*WSIZE), PACK(43*DSIZE, 1)); /* Prologue header */
-	
+
 	int i;
 	for(i = 2; i < 86; i++) {
 		PUT(heap_listp + (i*WSIZE), 0); /* initialize free pointers (one for every increment of 50 bytes*/
@@ -101,7 +100,6 @@ int mm_init(void)
 	PUT(heap_listp + (86*WSIZE), PACK(43*DSIZE, 1)); /* Prologue footer */
 	PUT(heap_listp + (87*WSIZE), PACK(0, 1)); /* Epilogue header */
 	heap_listp += (2*WSIZE);
-	global_minlist = 0;
 
 	/* Extend the empty heap with a free block of CHUNKSIZE bytes */
 	if (extend_heap(CHUNKSIZE/WSIZE) == NULL)
@@ -237,14 +235,8 @@ void *mm_malloc(size_t size)
  	minlist = size / 50;
  	if(minlist > 83)
  		minlist = 83; 
-	if(GET(bp) == 0 && GET(bp + WSIZE) == 0) { // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
- 		PUT(heap_listp+(minlist * WSIZE), 0);
- 		if(global_minlist == minlist) {
- 			temp_prev = (char *)GET(heap_listp + (minlist * WSIZE));
- 			for (; (int)temp_cur != 0 && GET_SIZE(HDRP(temp_cur)) < size; temp_cur = (char *)GET(temp_cur+WSIZE))	
- 			
- 		}
- 	}
+	if(GET(bp) == 0 && GET(bp + WSIZE) == 0) // if the prev free pointer and next free pointer were 0 set global first free pointer to 0.
+ 		PUT(heap_listp+(minlist * WSIZE), 0); 	
  	else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
  		PUT(heap_listp+(minlist * WSIZE), GET(bp + WSIZE));
  		PUT((char *)GET(bp + WSIZE), 0);
@@ -268,9 +260,7 @@ void *mm_malloc(size_t size)
  	size = GET_SIZE(HDRP(bp));
  	minlist = size / 50;
 	if(minlist > 83)
-		minlist = 83;
-	if(global_minlist > minlist)
-		global_minlist = minlist; //update global min list
+		minlist = 83; 
 	temp_cur = (char *)GET(heap_listp + (minlist * WSIZE));
 	if(temp_cur == 0){
 		PUT(heap_listp + (minlist * WSIZE), (int)bp);	
@@ -281,14 +271,14 @@ void *mm_malloc(size_t size)
 		temp_prev = (char *)GET(heap_listp + (minlist * WSIZE));
 		for (; (int)temp_cur != 0 && GET_SIZE(HDRP(temp_cur)) < size; temp_cur = (char *)GET(temp_cur+WSIZE))
 			temp_prev = temp_cur;
-		
+
 		temp_cur = temp_prev;
 		temp_next = (char *)GET(temp_cur + WSIZE); // get global next. 
 		PUT(temp_cur + WSIZE, (int)bp); //set global first free block to this block.
-	
+
 		if((int)temp_next != 0) // if the old global next was not 0, update the old global next's previous free block pointer to this block.
 		PUT(temp_next, (int)bp);
-	
+
 		PUT(bp, temp_cur); 
 		PUT(bp+WSIZE, (int)temp_next);
 		}
@@ -361,23 +351,23 @@ void mm_free(void *bp)
 	}
 
 	else { /* Case 4 */
-		
+
 		//REMOVE BP FROM FREE LIST
  		remove_free_list(bp);
  		//REMOVE PREV FROM FREE LIST
  		remove_free_list(PREV_BLKP(bp));
  		//REMOVE NEXT FROM FREE LIST
  		remove_free_list(NEXT_BLKP(bp));
-		
+
 		size += GET_SIZE(HDRP(PREV_BLKP(bp))) +
 		GET_SIZE(FTRP(NEXT_BLKP(bp)));
 		PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
 		PUT(FTRP(NEXT_BLKP(bp)), PACK(size, 0));
 		bp = PREV_BLKP(bp);
-		
+
 		//ADD TO THE FREE LIST
 		add_free_list(bp);
-		
+
 	}
 	return bp;
  }
@@ -416,7 +406,7 @@ void *mm_realloc(void *ptr, size_t size)
     	 else
 	  	size =  DSIZE * ((size + (DSIZE) + (DSIZE-1)) / DSIZE); // align size
 	if((size_prev - size) > (2*DSIZE)){
-	 	
+
 	 assert ( size <= size_prev);
     	 PUT(HDRP(oldptr), PACK(size, 1)); // resize old 
 	 PUT(FTRP(oldptr), PACK(size, 1)); // resize old
@@ -534,4 +524,3 @@ void *mm_realloc(void *ptr, size_t size)
 	    return newptr;
     }
 }
-
