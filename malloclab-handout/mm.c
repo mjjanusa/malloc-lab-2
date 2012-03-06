@@ -248,7 +248,7 @@ void *mm_malloc(size_t size)
  			int i;
  			for (i = minlist; GET(heap_listp+(i * WSIZE)) == 0 && i <= 83; i++);
  			
- 			if(i == 84)
+ 			if(i == 83)
  				global_minlist = -1;
  			else
  				global_minlist = i; 			
