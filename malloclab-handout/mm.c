@@ -252,6 +252,8 @@ void *mm_malloc(size_t size)
  					break;
  				} 					
  			}
+ 			if(i != 100)
+ 				i--;
  			global_minlist = i; 			
  		}
  	}
