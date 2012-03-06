@@ -388,7 +388,8 @@ void *mm_realloc(void *ptr, size_t size)
     	    	size = 2*DSIZE;
     	 else
 	  	size =  DSIZE * ((size + (DSIZE) + (DSIZE-1)) / DSIZE); // align size
-	 
+	 if((size_prev - size) > (2*DSIZE))
+	 	 break;
     	 PUT(HDRP(oldptr), PACK(size, 1)); // resize old 
 	 PUT(FTRP(oldptr), PACK(size, 1)); // resize old
 	/* newptr = oldptr; // set new ptr to old ptr
