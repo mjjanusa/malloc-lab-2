@@ -269,7 +269,7 @@ void *mm_malloc(size_t size)
 	}
 	else {
 		temp_prev = (char *)GET(heap_listp + (minlist * WSIZE));
-		for (; (int)temp_cur != 0 && GET_SIZE(HDRP(temp_cur)) < size; temp_cur = (char *)GET(temp_cur+WSIZE))
+		for (; (int)temp_cur != 0 && GET_SIZE(HDRP(temp_cur)) <= size; temp_cur = (char *)GET(temp_cur+WSIZE))
 			temp_prev = temp_cur;
 		
 		temp_cur = temp_prev;
