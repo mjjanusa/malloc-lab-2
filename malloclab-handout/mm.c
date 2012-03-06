@@ -330,6 +330,9 @@ void mm_free(void *bp)
 	size_t size = GET_SIZE(HDRP(bp));
 
 	if (prev_alloc && next_alloc) { // Case 1 
+		//ADD BP TO THE FREE LIST
+		add_free_list(bp);
+		
 		return bp;
 	}
 
