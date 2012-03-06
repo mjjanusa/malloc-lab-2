@@ -315,12 +315,12 @@ void *mm_malloc(size_t size)
 //void mm_free(void *ptr)
 void mm_free(void *bp)
 {
-	size_t size = GET_SIZE(HDRP(bp));
+	/*size_t size = GET_SIZE(HDRP(bp));
 
 	PUT(HDRP(bp), PACK(size, 0));
 	PUT(FTRP(bp), PACK(size, 0));
 
-	coalesce(bp);
+	coalesce(bp);*/
 }
 ////////////////////////////////////////////////////////////////
  static void *coalesce(void *bp)
@@ -329,12 +329,12 @@ void mm_free(void *bp)
 	size_t next_alloc = GET_ALLOC(HDRP(NEXT_BLKP(bp)));
 	size_t size = GET_SIZE(HDRP(bp));
 
-	//if (prev_alloc && next_alloc) { // Case 1 
+	if (prev_alloc && next_alloc) { // Case 1 
 		//ADD BP TO THE FREE LIST
 		add_free_list(bp);
 		
 		return bp;
-	/*}
+	}
 
 	else if (prev_alloc && !next_alloc) { // Case 2 
 
@@ -383,7 +383,7 @@ void mm_free(void *bp)
 		add_free_list(bp);
 
 	}
-	return bp;*/
+	return bp;
  }
 ////////////////////////////////////////////////////////////////
 /*
