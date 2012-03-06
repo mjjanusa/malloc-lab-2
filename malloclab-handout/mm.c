@@ -186,8 +186,8 @@ void *mm_malloc(size_t size)
  	/* First fit search */
  	void *bp;
  	
- 	if(global_minlist = 0)
- 		return null;
+ 	if(global_minlist == 0)
+ 		return NULL;
  	
  	int minlist = asize / 50;
  	if(minlist > 83)
@@ -248,7 +248,7 @@ void *mm_malloc(size_t size)
  			int i;
  			for (i = minlist; GET(heap_listp+(i * WSIZE)) == 0 && i <= 83; i++);
  			assert (GET(heap_listp+(i * WSIZE)) && i <= 83);
- 			global_minlist = temp_cur; 			
+ 			global_minlist = i; 			
  		}
  	}
  	else if (GET(bp) == 0 && GET(bp + WSIZE) != 0){// else if the prev pointer was 0 and next not zero make global first free pointer next.
@@ -295,7 +295,7 @@ void *mm_malloc(size_t size)
 		if((int)temp_next != 0) // if the old global next was not 0, update the old global next's previous free block pointer to this block.
 		PUT(temp_next, (int)bp);
 	
-		PUT(bp, temp_cur); 
+		PUT(bp, (int)temp_cur); 
 		PUT(bp+WSIZE, (int)temp_next);
 		}
 }
