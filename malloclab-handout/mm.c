@@ -334,7 +334,7 @@ void mm_free(void *bp)
 		add_free_list(bp);
 		
 		return bp;
-	//}
+	/*}
 
 	else if (prev_alloc && !next_alloc) { // Case 2 
 
@@ -383,7 +383,7 @@ void mm_free(void *bp)
 		add_free_list(bp);
 
 	}
-	return bp;
+	return bp;*/
  }
 ////////////////////////////////////////////////////////////////
 /*
