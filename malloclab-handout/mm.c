@@ -248,7 +248,7 @@ void *mm_malloc(size_t size)
  			int i;
  			for (i = minlist; GET(heap_listp+(i * WSIZE)) == 0; i++){
  				if(i == 84){
- 					i == 100;
+ 					i ==100;
  					break;
  				} 					
  			}
