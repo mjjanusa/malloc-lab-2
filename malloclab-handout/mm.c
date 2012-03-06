@@ -400,7 +400,7 @@ void *mm_realloc(void *ptr, size_t size)
 	add_free_list(oldptr);
 	//coalesce
 	coalesce(oldptr);*/
-	return newptr;
+	return oldptr;
     }
     if(increase == 0) {//if shrinking ptr and released space to small to be a block or size is the same return same ptr
     	    newptr = mm_malloc(size);
