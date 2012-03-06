@@ -370,7 +370,7 @@ void *mm_realloc(void *ptr, size_t size)
     size_t next_alloc = GET_ALLOC(HDRP(NEXT_BLKP(oldptr)));
     size_t size_prev = GET_SIZE(HDRP(oldptr));
     int increase;
-    if(size_prev > size + DSIZE) 
+    if(size_prev  < size + DSIZE) 
     	    increase = 1;
     else
     	    increase = 0;
